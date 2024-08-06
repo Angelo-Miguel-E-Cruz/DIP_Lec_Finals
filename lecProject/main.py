@@ -16,7 +16,7 @@ def is_close(rect1, rect2, threshold=100):
 
 
 # Read image and make gray
-img = cv2.imread("fruits.jpg")
+img = cv2.imread("person_glasses.jpg")
 gray_image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 # Remove the background
@@ -48,7 +48,7 @@ for (x, y, w, h) in faces:
     cv2.rectangle(image_no_bg, (x, y), (x + w, y + h), (0, 255, 0, 255), 2)
 
     # Get area of interest (face) and convert to gray
-    aoi_color = img[y:y + h, x:x + w]
+    aoi_color = image_no_bg[y:y + h, x:x + w]
     aoi_gray = cv2.cvtColor(aoi_color, cv2.COLOR_BGR2GRAY)
 
     # Detect eyes in area of interest (face)
@@ -56,8 +56,7 @@ for (x, y, w, h) in faces:
 
     # Draw bounding rectangle for eyes rectangles
     for (ex, ey, ew, eh) in eyes:
-        # Map the eye coordinates back to the original image coordinates
-        cv2.rectangle(image_no_bg, (x + ex, y + ey), (x + ex + ew, y + ey + eh), (255, 0, 0, 255), 2)
+        cv2.rectangle(aoi_color, (ex, ey), (ex + ew, ey + eh), (255, 0, 0, 255), 2)
 
 # Draw bounding rectangle for filtered_side_faces rectangles
 for (x, y, w, h) in filtered_side_faces:
