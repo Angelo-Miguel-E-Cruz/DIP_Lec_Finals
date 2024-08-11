@@ -1,7 +1,8 @@
+# Import necessary packages
 import cv2
 import matplotlib.pyplot as plt
-from rembg import remove
 import numpy as np
+from rembg import remove
 
 # Function to find the distance between rectangles in side_face and face
 def is_close(rect1, rect2, threshold=100):
@@ -12,11 +13,17 @@ def is_close(rect1, rect2, threshold=100):
     # Calculate the distance between the centers
     distance = ((center1[0] - center2[0]) ** 2 + (center1[1] - center2[1]) ** 2) ** 0.5
 
+    # Return boolean
     return distance < threshold
 
 
+# Font for text
+font = cv2.FONT_HERSHEY_SIMPLEX
+# Anti-aliasing to make text clearer
+antiAliasing = cv2.LINE_AA
+
 # Read image and make gray
-img = cv2.imread("person_glasses.jpg")
+img = cv2.imread("person.jpg")
 gray_image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 # Remove the background
@@ -46,6 +53,8 @@ for side_face in side_faces:
 # Draw bounding rectangle for face rectangles
 for (x, y, w, h) in faces:
     cv2.rectangle(image_no_bg, (x, y), (x + w, y + h), (0, 255, 0, 255), 2)
+    cv2.rectangle(image_no_bg, (x - 1, y), (x + w + 20, y - 30), (0, 255, 0, 255), -1)
+    cv2.putText(image_no_bg, 'Face', (x + 5, y - 10), font, 0.7, (0, 0, 0, 255), 1, antiAliasing)
 
     # Get area of interest (face) and convert to gray
     aoi_color = image_no_bg[y:y + h, x:x + w]
@@ -57,13 +66,17 @@ for (x, y, w, h) in faces:
     # Draw bounding rectangle for eyes rectangles
     for (ex, ey, ew, eh) in eyes:
         cv2.rectangle(aoi_color, (ex, ey), (ex + ew, ey + eh), (255, 0, 0, 255), 2)
+        cv2.rectangle(aoi_color, (ex - 1, ey), (ex + ew + 10, ey - 30), (255, 0, 0, 255), -1)
+        cv2.putText(aoi_color, 'Eye', (ex + 5, ey - 10), font, 0.5, (0, 0, 0, 255), 1, antiAliasing)
 
 # Draw bounding rectangle for filtered_side_faces rectangles
 for (x, y, w, h) in filtered_side_faces:
     cv2.rectangle(image_no_bg, (x, y), (x + w, y + h), (0, 255, 0, 255), 2)
+    cv2.rectangle(image_no_bg, (x - 1, y), (x + w + 10, y - 30), (0, 255, 0, 255), -1)
+    cv2.putText(image_no_bg, 'Face', (x + 5, y - 10), font, 0.7, (0, 0, 0, 255), 1, antiAliasing)
 
 # Plot the image
-plt.figure(figsize=(20, 10))
+plt.figure(figsize=(10, 10))
 plt.imshow(image_no_bg)
 plt.axis('off')
 plt.show()
